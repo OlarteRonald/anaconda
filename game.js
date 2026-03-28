@@ -5,21 +5,20 @@ const Game = {
     width: 0,
     height: 0,
     snake: [],
-    direction: 'right',
-    nextDirection: 'right',
+    direction: 'up',
+    nextDirection: 'up',
     food: null,
     obstacles: [],
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 2500, // Inicio a 2.5 segundos
+    speed: 2500, // Empieza a 2.5 seg
     startTime: 0,
     gameTime: 0,
     timer: null,
     gameInterval: null,
     isPaused: false,
 
-    // Audio assets
     sounds: {
         eat: new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3'),
         success: new Audio('https://assets.mixkit.co/active_storage/sfx/1939/1939-preview.mp3'),
@@ -31,14 +30,10 @@ const Game = {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         
+        // Ajustamos el tamaño al contenedor para que las paredes coincidan con lo que el usuario ve
         const container = canvas.parentElement;
-        this.width = canvas.width = container.clientWidth * 1.5; 
-        this.height = canvas.height = container.clientHeight * 1.5;
-        
-        this.width = Math.floor(this.width / this.gridSize) * this.gridSize;
-        this.height = Math.floor(this.height / this.gridSize) * this.gridSize;
-        canvas.width = this.width;
-        canvas.height = this.height;
+        this.width = canvas.width = Math.floor(container.clientWidth / this.gridSize) * this.gridSize;
+        this.height = canvas.height = Math.floor(container.clientHeight / this.gridSize) * this.gridSize;
 
         this.sounds.bg.loop = true;
         this.sounds.bg.volume = 0.3;
@@ -47,19 +42,20 @@ const Game = {
     },
 
     reset() {
-        const leftX = this.gridSize * 3;
-        const centerY = Math.floor(this.height / 2 / this.gridSize) * this.gridSize;
+        // Iniciar desde la parte inferior central
+        const centerX = Math.floor(this.width / 2 / this.gridSize) * this.gridSize;
+        const bottomY = this.height - this.gridSize;
         
         this.snake = [
-            { x: leftX, y: centerY },
-            { x: leftX - this.gridSize, y: centerY },
-            { x: leftX - (this.gridSize * 2), y: centerY }
+            { x: centerX, y: bottomY },
+            { x: centerX, y: bottomY + this.gridSize },
+            { x: centerX, y: bottomY + (this.gridSize * 2) }
         ];
-        this.direction = 'right';
-        this.nextDirection = 'right';
+        this.direction = 'up';
+        this.nextDirection = 'up';
         this.score = 0;
         this.level = 1;
-        this.speed = 2500; // Al reiniciar se mantiene a 2.5 segundos
+        this.speed = 2500; // Reset a 2.5 seg
         this.gameOver = false;
         this.gameTime = 0;
         this.obstacles = [];
@@ -70,7 +66,7 @@ const Game = {
     start() {
         this.reset();
         this.startTime = Date.now();
-        this.sounds.bg.play().catch(e => console.log("Music play blocked", e));
+        this.sounds.bg.play().catch(e => {});
         this.gameInterval = setTimeout(() => this.tick(), this.speed);
         this.timer = setInterval(() => {
             if (!this.isPaused && !this.gameOver) {
@@ -92,19 +88,13 @@ const Game = {
     },
 
     tick() {
-        if (this.gameOver || this.isPaused) {
-          this.gameInterval = setTimeout(() => this.tick(), this.speed);
-          return;
-        }
+        if (this.gameOver || this.isPaused) return;
 
         this.move();
         this.checkCollision();
         this.draw();
         
-        this.gameInterval = setTimeout(
-            () => this.tick(), 
-            this.speed
-        );
+        this.gameInterval = setTimeout(() => this.tick(), this.speed);
     },
 
     move() {
@@ -118,7 +108,7 @@ const Game = {
 
         this.snake.unshift(head);
 
-        if (head.x === this.food.x && head.y === this.food.y) {
+        if (this.food && head.x === this.food.x && head.y === this.food.y) {
             this.handleEat();
         } else {
             this.snake.pop();
@@ -141,8 +131,7 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        // Al subir de nivel, la velocidad se fija en 3 segundos constantes
-        this.speed = 3000; 
+        this.speed = 3000; // Fijo a 3 seg después del nivel 1
         this.spawnObstacle();
     },
 
@@ -166,7 +155,7 @@ const Game = {
         const y = Math.floor(Math.random() * (this.height / this.gridSize)) * this.gridSize;
         
         const onSnake = this.snake.some(segment => segment.x === x && segment.y === y);
-        const onFood = this.food.x === x && this.food.y === y;
+        const onFood = this.food && this.food.x === x && this.food.y === y;
 
         if (onSnake || onFood) {
           this.spawnObstacle();
@@ -179,8 +168,9 @@ const Game = {
     checkCollision() {
         const head = this.snake[0];
 
-        // PAREDES: Colisión inmediata con los límites del tablero
+        // PAREDES: Colisión MUY estricta
         if (head.x < 0 || head.x >= this.width || head.y < 0 || head.y >= this.height) {
+            console.log("Collision with wall at:", head.x, head.y);
             this.endGame();
             return;
         }
@@ -205,8 +195,8 @@ const Game = {
     endGame() {
         if (this.gameOver) return;
         this.gameOver = true;
-        this.sounds.collision.play().catch(e => {});
         this.stop();
+        this.sounds.collision.play().catch(e => {});
         if (this.onGameOver) this.onGameOver(this.score, this.gameTime);
     },
 
@@ -226,15 +216,17 @@ const Game = {
         this.ctx.fillStyle = "#010804"; 
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Borde visual para las paredes
-        this.ctx.strokeStyle = "rgba(57, 255, 20, 0.2)";
-        this.ctx.lineWidth = 4;
+        // Paredes visuales neón
+        this.ctx.strokeStyle = "#39ff14";
+        this.ctx.lineWidth = 2;
         this.ctx.strokeRect(0, 0, this.width, this.height);
 
-        this.ctx.font = `${this.gridSize - 2}px Inter`;
-        this.ctx.textAlign = 'left';
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillText(this.food.type, this.food.x, this.food.y);
+        if (this.food) {
+          this.ctx.font = `${this.gridSize - 2}px Inter`;
+          this.ctx.textAlign = 'left';
+          this.ctx.textBaseline = 'top';
+          this.ctx.fillText(this.food.type, this.food.x, this.food.y);
+        }
 
         this.obstacles.forEach(o => {
           this.ctx.fillText(o.type, o.x, o.y);
@@ -252,8 +244,8 @@ const Game = {
             grad.addColorStop(1, "#0a2a0a");
             
             this.ctx.fillStyle = grad;
-            this.ctx.shadowBlur = isHead ? 15 : 8;
-            this.ctx.shadowColor = "rgba(57, 255, 20, 0.4)";
+            this.ctx.shadowBlur = isHead ? 20 : 10;
+            this.ctx.shadowColor = "#39ff14";
             
             this.ctx.beginPath();
             this.ctx.arc(0, 0, size/2, 0, Math.PI * 2);
