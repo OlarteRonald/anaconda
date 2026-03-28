@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 220, // Much slower initial speed for ease of play
+    speed: 350, // Even slower for a relaxed start
     startTime: 0,
     gameTime: 0,
     timer: null,
