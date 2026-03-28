@@ -86,7 +86,7 @@ const App = {
             try {
                 if (this.isSignUp) {
                     await SupabaseManager.signUp(email, password, identifier);
-                    alert("¡Cuenta registrada! Revisa tu email para confirmar o intenta entrar.");
+                    alert("¡Cuenta registrada! Revisa tu email o intenta entrar directamente.");
                     this.isSignUp = false;
                     this.updateAuthUI();
                 } else {
@@ -99,26 +99,26 @@ const App = {
             }
         });
 
-        // Cerrar Sesión
+        // Logout
         document.getElementById('logout-btn')?.addEventListener('click', async () => {
             await SupabaseManager.signOut();
             this.user = null;
             this.showScreen('auth-screen');
         });
 
-        // Botón Jugar
+        // Dashboard Navigation
         document.getElementById('start-game-btn')?.addEventListener('click', () => {
             this.showScreen('instructions-screen');
         });
 
-        // Cámara
+        // Camera Activation
         document.getElementById('grant-camera-btn')?.addEventListener('click', async () => {
             this.showScreen('game-screen');
             await AIManager.init();
             this.startGame();
         });
 
-        // Retenedor
+        // Reset Game
         document.getElementById('retry-btn')?.addEventListener('click', () => {
             this.showScreen('game-screen');
             this.startGame();
@@ -163,14 +163,17 @@ const App = {
         Game.init(canvas);
         
         AIManager.onGestureDetected = (label) => {
-          const mapping = {
-            'spoon_up': 'up',
-            'spoon_right': 'right',
-            'fork_down': 'down',
-            'fork_left': 'left'
-          };
-          if (mapping[label]) {
-            Game.setDirection(mapping[label]);
+          // Robust mapping covering potential labels from Teachable Machine
+          const l = label.toLowerCase();
+          
+          if (l.includes('up') || l.includes('arriba')) {
+            Game.setDirection('up');
+          } else if (l.includes('right') || l.includes('derecha')) {
+            Game.setDirection('right');
+          } else if (l.includes('down') || l.includes('abajo')) {
+            Game.setDirection('down');
+          } else if (l.includes('left') || l.includes('izquierda')) {
+            Game.setDirection('left');
           }
         };
 

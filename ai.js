@@ -65,8 +65,10 @@ const AIManager = {
             }
         }
 
-        if (bestPrediction && maxProb > 0.85) { 
+        if (bestPrediction && maxProb > 0.70) { // Lower threshold for better sensitivity
             const label = bestPrediction.className;
+            console.log("AI Detected:", label, Math.round(maxProb * 100), "%");
+            
             this.updateGestureStatus(label, maxProb);
             
             if (this.onGestureDetected) {
