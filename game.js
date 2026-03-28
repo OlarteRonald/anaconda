@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 3500, // Ultra-relaxed: 3.5 seconds per tile
+    speed: 3000, // Locked: 3 seconds per tile
     startTime: 0,
     gameTime: 0,
     timer: null,
@@ -59,7 +59,7 @@ const Game = {
         this.nextDirection = 'right';
         this.score = 0;
         this.level = 1;
-        this.speed = 3500; // Mantener los 3.5 segundos constantes al reiniciar
+        this.speed = 3000; // Mantener los 3 segundos constantes al reiniciar
         this.gameOver = false;
         this.gameTime = 0;
         this.obstacles = [];
@@ -138,7 +138,7 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        this.speed = 3500; // Se mantiene constante sin importar el nivel
+        this.speed = 3000; // Se mantiene constante sin importar el nivel
         this.spawnObstacle();
     },
 
