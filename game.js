@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 350, // Even slower for a relaxed start
+    speed: 950, // Roughly 1 second per tile
     startTime: 0,
     gameTime: 0,
     timer: null,
@@ -127,7 +127,7 @@ const Game = {
         this.sounds.eat.play().catch(e => {});
         this.spawnFood();
 
-        if (this.score % 5 === 0) { // Quicker level up
+        if (this.score % 5 === 0) { 
             this.levelUp();
         }
         
@@ -137,7 +137,7 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        this.speed = Math.max(80, this.speed - 15); 
+        this.speed = Math.max(800, this.speed - 5); 
         this.spawnObstacle();
     },
 
