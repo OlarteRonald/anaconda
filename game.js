@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 3000, // Locked: 3 seconds per tile
+    speed: 2500, // Inicio a 2.5 segundos
     startTime: 0,
     gameTime: 0,
     timer: null,
@@ -59,7 +59,7 @@ const Game = {
         this.nextDirection = 'right';
         this.score = 0;
         this.level = 1;
-        this.speed = 3000; // Mantener los 3 segundos constantes al reiniciar
+        this.speed = 2500; // Al reiniciar se mantiene a 2.5 segundos
         this.gameOver = false;
         this.gameTime = 0;
         this.obstacles = [];
@@ -101,7 +101,10 @@ const Game = {
         this.checkCollision();
         this.draw();
         
-        this.gameInterval = setTimeout(() => this.tick(), this.speed);
+        this.gameInterval = setTimeout(
+            () => this.tick(), 
+            this.speed
+        );
     },
 
     move() {
@@ -138,7 +141,8 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        this.speed = 3000; // Se mantiene constante sin importar el nivel
+        // Al subir de nivel, la velocidad se fija en 3 segundos constantes
+        this.speed = 3000; 
         this.spawnObstacle();
     },
 
@@ -175,24 +179,31 @@ const Game = {
     checkCollision() {
         const head = this.snake[0];
 
+        // PAREDES: Colisión inmediata con los límites del tablero
         if (head.x < 0 || head.x >= this.width || head.y < 0 || head.y >= this.height) {
             this.endGame();
+            return;
         }
 
+        // CUERPO
         for (let i = 1; i < this.snake.length; i++) {
             if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
                 this.endGame();
+                return;
             }
         }
 
+        // OBSTÁCULOS
         this.obstacles.forEach(o => {
             if (head.x === o.x && head.y === o.y) {
                 this.endGame();
+                return;
             }
         });
     },
 
     endGame() {
+        if (this.gameOver) return;
         this.gameOver = true;
         this.sounds.collision.play().catch(e => {});
         this.stop();
@@ -214,6 +225,11 @@ const Game = {
     draw() {
         this.ctx.fillStyle = "#010804"; 
         this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // Borde visual para las paredes
+        this.ctx.strokeStyle = "rgba(57, 255, 20, 0.2)";
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeRect(0, 0, this.width, this.height);
 
         this.ctx.font = `${this.gridSize - 2}px Inter`;
         this.ctx.textAlign = 'left';
