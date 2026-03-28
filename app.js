@@ -164,17 +164,26 @@ const App = {
         Game.init(canvas);
         
         AIManager.onGestureDetected = (label) => {
-          // Robust mapping covering potential labels from Teachable Machine
+          // El mapeo ahora es más directo según las clases del entrenamiento
+          // Las clases esperadas son: arriba, derecha, abajo, izquierda, spoon_up
           const l = label.toLowerCase();
           
-          if (l.includes('up') || l.includes('arriba')) {
-            Game.setDirection('up');
-          } else if (l.includes('right') || l.includes('derecha')) {
-            Game.setDirection('right');
-          } else if (l.includes('down') || l.includes('abajo')) {
-            Game.setDirection('down');
-          } else if (l.includes('left') || l.includes('izquierda')) {
-            Game.setDirection('left');
+          switch(l) {
+            case 'arriba':
+            case 'spoon_up':
+              Game.setDirection('up');
+              break;
+            case 'abajo':
+              Game.setDirection('down');
+              break;
+            case 'izquierda':
+              Game.setDirection('left');
+              break;
+            case 'derecha':
+              Game.setDirection('right');
+              break;
+            default:
+              console.log("Gesto no mapeado o Neutral:", label);
           }
         };
 
