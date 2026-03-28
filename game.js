@@ -50,12 +50,13 @@ const Game = {
 
     reset() {
         const centerX = Math.floor(this.width / 2 / this.gridSize) * this.gridSize;
-        const bottomY = this.height - (this.gridSize * 3);
+        // Adjusted to be inside the visible center area of the large canvas
+        const headY = Math.floor((this.height / 2 + this.height / 4) / this.gridSize) * this.gridSize;
         
         this.snake = [
-            { x: centerX, y: bottomY },
-            { x: centerX, y: bottomY + this.gridSize },
-            { x: centerX, y: bottomY + (this.gridSize * 2) }
+            { x: centerX, y: headY },
+            { x: centerX, y: headY + this.gridSize },
+            { x: centerX, y: headY + (this.gridSize * 2) }
         ];
         this.direction = 'up';
         this.nextDirection = 'up';
