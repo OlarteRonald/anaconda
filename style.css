@@ -191,24 +191,29 @@ input {
     margin-top: 1rem;
 }
 
-/* Floating HUD on Game Board */
-.hud {
-    position: absolute;
-    top: 40px;
-    left: 50px;
+/* Enhanced Stats Card in Sidebar */
+.status-card {
+  padding: 1.5rem !important;
+  border-radius: 30px !important;
+  margin-bottom: 0 !important;
+  background: linear-gradient(135deg, rgba(57, 255, 20, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+}
+
+.hud-inline {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-    z-index: 10;
+    gap: 0.5rem;
 }
 
 .score-stat, .level-stat {
     font-family: var(--font-heading);
-    font-size: 3.5rem;
+    font-size: 2rem;
     font-weight: 900;
     color: white;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    background: linear-gradient(to right, #fff, #39ff14);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Other screens (GameOver) */

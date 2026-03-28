@@ -51,6 +51,9 @@ const AIManager = {
         window.requestAnimationFrame(() => this.loop());
     },
 
+    stableGestureCount: 0,
+    lastDetectedLabel: '',
+
     async predict() {
         if (!this.model) return;
         const prediction = await this.model.predict(this.webcam.canvas);
@@ -65,16 +68,28 @@ const AIManager = {
             }
         }
 
-        if (bestPrediction && maxProb > 0.70) { // Lower threshold for better sensitivity
+        // Increased threshold for strict classification
+        if (bestPrediction && maxProb > 0.85) { 
             const label = bestPrediction.className;
-            console.log("AI Detected:", label, Math.round(maxProb * 100), "%");
             
-            this.updateGestureStatus(label, maxProb);
-            
-            if (this.onGestureDetected) {
-                this.onGestureDetected(label);
+            // Smoothing logic: Required stability across multiple frames
+            if (label === this.lastDetectedLabel) {
+                this.stableGestureCount++;
+            } else {
+                this.lastDetectedLabel = label;
+                this.stableGestureCount = 0;
+            }
+
+            if (this.stableGestureCount >= 3) { // Require 3 frames of same gesture
+                console.log("AI Stable Gesture:", label);
+                this.updateGestureStatus(label, maxProb);
+                
+                if (this.onGestureDetected) {
+                    this.onGestureDetected(label);
+                }
             }
         } else {
+             this.stableGestureCount = 0;
              this.updateGestureStatus('Neutral', maxProb);
         }
     },

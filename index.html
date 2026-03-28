@@ -109,14 +109,17 @@
             <div class="game-view">
                 <canvas id="game-canvas"></canvas>
                 <div id="game-overlay">
-                    <div class="hud">
-                        <div class="score-stat">Puntos: <span id="current-score">0</span></div>
-                        <div class="level-stat">Nivel: <span id="current-level">1</span></div>
-                    </div>
+                    <!-- HUD moved to sidebar as requested -->
                 </div>
             </div>
             
             <aside class="game-sidebar">
+                <div class="glass-card status-card">
+                  <div class="hud-inline">
+                      <div class="score-stat">Puntos: <span id="current-score">0</span></div>
+                      <div class="level-stat">Nivel: <span id="current-level">1</span></div>
+                  </div>
+                </div>
                 <div class="camera-preview-container">
                     <div id="camera-loading">Cargando IA...</div>
                     <video id="camera-preview" autoplay muted playsinline></video>
