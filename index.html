@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anaconda Vision | Premium Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter and Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- TensorFlow.js and Teachable Machine -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body class="dark-mode">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="logo-container">
+            <img src="logo.png" alt="Anaconda Vision" id="main-logo" class="fade-in">
+            <h1 class="premium-title">ANACONDA</h1>
+            <p class="premium-subtitle">Vision</p>
+            <button id="enter-btn" class="primary-btn pulse" style="margin-top: 2rem; display: none;">ENTRAR</button>
+        </div>
+        <div class="loader" id="initial-loader"></div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="glass-card auth-card">
+            <h2 id="auth-title">Iniciar Sesión</h2>
+            <form id="auth-form">
+                <div class="input-group" id="username-group" style="display: none;">
+                    <label for="username">Nombre de usuario</label>
+                    <input type="text" id="username" placeholder="Escribe tu usuario">
+                </div>
+                <div class="input-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" required placeholder="Escribe tu email">
+                </div>
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required placeholder="Escribe tu contraseña">
+                </div>
+                <button type="submit" id="auth-btn" class="primary-btn">Entrar</button>
+            </form>
+            <p class="toggle-auth">¿No tienes cuenta? <span id="toggle-btn">Regístrate</span></p>
+        </div>
+    </div>
+
+    <!-- Main Menu / Dashboard -->
+    <div id="dashboard-screen" class="screen">
+        <div class="dashboard-content">
+            <h1 class="logo-text">Anaconda Vision</h1>
+            <div class="stats-container">
+                <div class="glass-card ranking-board">
+                    <h3>Ranking Global (Top 5)</h3>
+                    <ul id="global-rankings">
+                        <!-- Rankings populated here -->
+                    </ul>
+                </div>
+                <div class="glass-card ranking-board">
+                    <h3>Mis Mejores Tiempos (Top 5)</h3>
+                    <ul id="personal-rankings">
+                        <!-- Rankings populated here -->
+                    </ul>
+                </div>
+            </div>
+            <div class="dashboard-actions">
+                <button id="start-game-btn" class="primary-btn pulse">JUGAR AHORA</button>
+                <button id="logout-btn" class="secondary-btn">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Screen -->
+    <div id="instructions-screen" class="screen">
+        <div class="glass-card instructions-card">
+            <h2>Cómo Jugar</h2>
+            <div class="gestures-grid">
+                <div class="gesture">
+                    <span class="icon">🥄 ⬆️</span>
+                    <p>Cuchara hacia arriba para subir</p>
+                </div>
+                <div class="gesture">
+                    <span class="icon">🥄 ➡️</span>
+                    <p>Cuchara a la derecha para girar</p>
+                </div>
+                <div class="gesture">
+                    <span class="icon">🍴 ⬇️</span>
+                    <p>Tenedor hacia abajo para bajar</p>
+                </div>
+                <div class="gesture">
+                    <span class="icon">🍴 ⬅️</span>
+                    <p>Tenedor a la izquierda para girar</p>
+                </div>
+            </div>
+            <p class="camera-notice">Necesitamos acceso a tu cámara para detectar tus gestos.</p>
+            <button id="grant-camera-btn" class="primary-btn">Activar Cámara & Empezar</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-layout">
+            <div class="game-view">
+                <canvas id="game-canvas"></canvas>
+                <div id="game-overlay">
+                    <div class="hud">
+                        <div class="score-stat">Puntos: <span id="current-score">0</span></div>
+                        <div class="level-stat">Nivel: <span id="current-level">1</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <aside class="game-sidebar">
+                <div class="camera-preview-container">
+                    <div id="camera-loading">Cargando IA...</div>
+                    <video id="camera-preview" autoplay muted playsinline></video>
+                    <div class="ai-status">
+                      <span id="detected-gesture">Esperando...</span>
+                      <div class="confidence-bar-container">
+                          <div id="confidence-bar"></div>
+                      </div>
+                    </div>
+                </div>
+                <div class="controls-info glass-card">
+                  <h4>Controles</h4>
+                  <ul>
+                    <li>🥄 Arriba / Derecha</li>
+                    <li>🍴 Abajo / Izquierda</li>
+                    <li>Presione <kbd>P</kbd> para Pausar</li>
+                  </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="screen">
+        <div class="glass-card game-over-card">
+            <h1>Fin de la Partida</h1>
+            <p class="final-score">Puntaje Final: <span id="final-score-val">0</span></p>
+            <p class="final-time">Tiempo de Juego: <span id="final-time-val">0</span>s</p>
+            <div class="actions">
+                <button id="retry-btn" class="primary-btn">Reintentar</button>
+                <button id="home-btn" class="secondary-btn">Inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Scripts -->
+    <script src="supabase.js"></script>
+    <script src="ai.js"></script>
+    <script src="game.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
