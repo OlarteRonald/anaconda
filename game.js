@@ -1,7 +1,7 @@
 const Game = {
     canvas: null,
     ctx: null,
-    gridSize: 24, // Increased grid size for better look
+    gridSize: 24, 
     width: 0,
     height: 0,
     snake: [],
@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 2500, // Very slow - 2.5 seconds per tile for maximum ease
+    speed: 3500, // Ultra-relaxed: 3.5 seconds per tile
     startTime: 0,
     gameTime: 0,
     timer: null,
@@ -24,19 +24,17 @@ const Game = {
         eat: new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3'),
         success: new Audio('https://assets.mixkit.co/active_storage/sfx/1939/1939-preview.mp3'),
         collision: new Audio('https://assets.mixkit.co/active_storage/sfx/218/218-preview.mp3'),
-        bg: new Audio('https://www.flanigan.co/sounds/forest_loop.mp3') // Placeholder jungle loop
+        bg: new Audio('https://www.flanigan.co/sounds/forest_loop.mp3') 
     },
 
     init(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         
-        // Make the game board larger
         const container = canvas.parentElement;
         this.width = canvas.width = container.clientWidth * 1.5; 
         this.height = canvas.height = container.clientHeight * 1.5;
         
-        // Proper grid snapping
         this.width = Math.floor(this.width / this.gridSize) * this.gridSize;
         this.height = Math.floor(this.height / this.gridSize) * this.gridSize;
         canvas.width = this.width;
@@ -49,20 +47,19 @@ const Game = {
     },
 
     reset() {
-        const centerX = Math.floor(this.width / 2 / this.gridSize) * this.gridSize;
-        // Adjusted to be inside the visible center area of the large canvas
-        const headY = Math.floor((this.height / 2 + this.height / 4) / this.gridSize) * this.gridSize;
+        const leftX = this.gridSize * 3;
+        const centerY = Math.floor(this.height / 2 / this.gridSize) * this.gridSize;
         
         this.snake = [
-            { x: centerX, y: headY },
-            { x: centerX, y: headY + this.gridSize },
-            { x: centerX, y: headY + (this.gridSize * 2) }
+            { x: leftX, y: centerY },
+            { x: leftX - this.gridSize, y: centerY },
+            { x: leftX - (this.gridSize * 2), y: centerY }
         ];
-        this.direction = 'up';
-        this.nextDirection = 'up';
+        this.direction = 'right';
+        this.nextDirection = 'right';
         this.score = 0;
         this.level = 1;
-        this.speed = 2500; // Corrected ultra slow speed for reset
+        this.speed = 3500; // Mantener los 3.5 segundos constantes al reiniciar
         this.gameOver = false;
         this.gameTime = 0;
         this.obstacles = [];
@@ -141,7 +138,7 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        this.speed = Math.max(2000, this.speed - 0); // Keep it ultra slow
+        this.speed = 3500; // Se mantiene constante sin importar el nivel
         this.spawnObstacle();
     },
 
@@ -215,22 +212,18 @@ const Game = {
     },
 
     draw() {
-        // Clear background with subtle pattern
         this.ctx.fillStyle = "#010804"; 
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Draw food
         this.ctx.font = `${this.gridSize - 2}px Inter`;
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'top';
         this.ctx.fillText(this.food.type, this.food.x, this.food.y);
 
-        // Draw obstacles
         this.obstacles.forEach(o => {
           this.ctx.fillText(o.type, o.x, o.y);
         });
 
-        // Draw REALISTIC snake
         this.snake.forEach((segment, index) => {
             const isHead = index === 0;
             const size = this.gridSize - 2;
@@ -238,23 +231,18 @@ const Game = {
             this.ctx.save();
             this.ctx.translate(segment.x + this.gridSize/2, segment.y + this.gridSize/2);
 
-            // Realistic Gradient Body
             const grad = this.ctx.createRadialGradient(0, 0, 0, 0, 0, this.gridSize/2);
             grad.addColorStop(0, isHead ? "#39ff14" : "#1db954");
             grad.addColorStop(1, "#0a2a0a");
             
             this.ctx.fillStyle = grad;
-            
-            // Shadows for depth
             this.ctx.shadowBlur = isHead ? 15 : 8;
             this.ctx.shadowColor = "rgba(57, 255, 20, 0.4)";
             
-            // Rounded body parts
             this.ctx.beginPath();
             this.ctx.arc(0, 0, size/2, 0, Math.PI * 2);
             this.ctx.fill();
             
-            // Add details to head
             if (isHead) {
                 this.ctx.fillStyle = "white";
                 this.ctx.beginPath();
