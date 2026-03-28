@@ -12,7 +12,7 @@ const Game = {
     score: 0,
     level: 1,
     gameOver: false,
-    speed: 950, // Roughly 1 second per tile
+    speed: 2500, // Very slow - 2.5 seconds per tile for maximum ease
     startTime: 0,
     gameTime: 0,
     timer: null,
@@ -137,7 +137,7 @@ const Game = {
     levelUp() {
         this.level += 1;
         this.sounds.success.play().catch(e => {});
-        this.speed = Math.max(800, this.speed - 5); 
+        this.speed = Math.max(2000, this.speed - 0); // Keep it ultra slow
         this.spawnObstacle();
     },
 
