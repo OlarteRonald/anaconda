@@ -49,16 +49,19 @@ const Game = {
     },
 
     reset() {
+        const centerX = Math.floor(this.width / 2 / this.gridSize) * this.gridSize;
+        const bottomY = this.height - (this.gridSize * 3);
+        
         this.snake = [
-            { x: this.gridSize * 5, y: this.gridSize * 5 },
-            { x: this.gridSize * 4, y: this.gridSize * 5 },
-            { x: this.gridSize * 3, y: this.gridSize * 5 }
+            { x: centerX, y: bottomY },
+            { x: centerX, y: bottomY + this.gridSize },
+            { x: centerX, y: bottomY + (this.gridSize * 2) }
         ];
-        this.direction = 'right';
-        this.nextDirection = 'right';
+        this.direction = 'up';
+        this.nextDirection = 'up';
         this.score = 0;
         this.level = 1;
-        this.speed = 220; 
+        this.speed = 2500; // Corrected ultra slow speed for reset
         this.gameOver = false;
         this.gameTime = 0;
         this.obstacles = [];
