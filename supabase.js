@@ -29,14 +29,15 @@ const SupabaseManager = {
     },
 
     async signIn(identifier, password) {
-        // Find email by username
-        let email = identifier; // Fallback if it's already an email
+        // Find email by username (case-insensitive lookup)
+        let email = identifier.trim(); 
+        const lowerIdentifier = identifier.trim().toLowerCase();
         
         if (!identifier.includes('@')) {
           const { data, error } = await supabaseClient
             .from('profiles')
             .select('email')
-            .eq('username', identifier)
+            .eq('username', lowerIdentifier)
             .single();
           
           if (error) {
