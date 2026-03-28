@@ -47,7 +47,7 @@ const App = {
 
         this.populateRanking('global-rankings', globalRank);
         this.populateRanking('personal-rankings', personalRank);
-        this.populateRanking('game-personal-rankings', personalRank); 
+        this.populateRanking('game-personal-rankings', personalRank.slice(0, 3)); 
     },
 
     populateRanking(elementId, items) {

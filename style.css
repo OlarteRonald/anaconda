@@ -81,8 +81,8 @@ body {
     flex-direction: row; 
     width: 100vw;
     height: 100vh;
-    padding: 2.5rem; /* Space from screen edges */
-    gap: 2.5rem; /* Space between the two main modules */
+    padding: 1.2rem; /* Reduced from 2.5rem to save space */
+    gap: 1.2rem; /* Reduced from 2.5rem to save space */
     background: #000;
 }
 
@@ -191,30 +191,29 @@ input {
     margin-top: 1rem;
 }
 
-/* Enhanced Stats Card in Sidebar - More Compact */
+/* Ultra Compact Stats Board */
 .status-card {
-  padding: 1rem !important;
-  border-radius: 24px !important;
+  padding: 0.5rem 1rem !important; /* Minimal padding */
+  border-radius: 16px !important;
   margin-bottom: 0 !important;
-  background: linear-gradient(135deg, rgba(57, 255, 20, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  background: rgba(57, 255, 20, 0.1) !important;
+  border: 1px solid rgba(57, 255, 20, 0.2) !important;
 }
 
 .hud-inline {
     display: flex;
-    flex-direction: row; /* Changed to row for compactness */
-    justify-content: space-around;
-    gap: 1rem;
+    flex-direction: row; 
+    justify-content: center;
+    gap: 1.5rem;
 }
 
 .score-stat, .level-stat {
     font-family: var(--font-heading);
-    font-size: 1.1rem; /* Significantly reduced from 2rem */
+    font-size: 0.85rem; /* Very small */
     font-weight: 800;
-    color: white;
-    background: linear-gradient(to right, #fff, #39ff14);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #39ff14;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Other screens (GameOver) */
@@ -229,6 +228,12 @@ input {
   font-weight: 900;
 }
 
+.mini-rankings li {
+  padding: 0.4rem 0 !important;
+  font-size: 0.75rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
 /* Animations */
 .pulse { animation: pulse 2s infinite; }
 @keyframes pulse {
@@ -238,6 +243,8 @@ input {
 }
 
 @media (max-width: 1000px) {
-    .game-layout { flex-direction: column; height: auto; padding: 1.5rem; }
-    .game-view { height: 60vh; width: 100%; }
+    .game-layout { flex-direction: column; min-height: 100vh; height: auto; padding: 1rem; }
+    .game-view { height: 50vh; width: 100%; }
+    .game-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .camera-preview-container { width: 200px; }
 }

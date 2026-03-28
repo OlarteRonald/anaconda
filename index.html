@@ -114,12 +114,7 @@
             </div>
             
             <aside class="game-sidebar">
-                <div class="glass-card status-card">
-                  <div class="hud-inline">
-                      <div class="score-stat">Puntos: <span id="current-score">0</span></div>
-                      <div class="level-stat">Nivel: <span id="current-level">1</span></div>
-                  </div>
-                </div>
+                <!-- Visor camera now priority on top -->
                 <div class="camera-preview-container">
                     <div id="camera-loading">Cargando IA...</div>
                     <video id="camera-preview" autoplay muted playsinline></video>
@@ -130,8 +125,16 @@
                       </div>
                     </div>
                 </div>
-                <div class="personal-scores-info glass-card">
-                  <h4>Mis Mejores</h4>
+
+                <div class="glass-card status-card">
+                  <div class="hud-inline">
+                      <div class="score-stat">PTS: <span id="current-score">0</span></div>
+                      <div class="level-stat">NVL: <span id="current-level">1</span></div>
+                  </div>
+                </div>
+                
+                <div class="personal-scores-info glass-card" style="padding: 1rem !important;">
+                  <h4 style="font-size: 0.8rem; margin-bottom: 0.5rem;">Mis Mejores</h4>
                   <ul id="game-personal-rankings" class="mini-rankings">
                     <!-- Populated by JS -->
                   </ul>
