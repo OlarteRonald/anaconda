@@ -68,7 +68,7 @@ const App = {
           this.checkSession();
         });
 
-        // Alternar Login/Registro usando delegación de eventos para evitar problemas con innerHTML
+        // Alternar Login/Registro
         document.body.addEventListener('click', (e) => {
             if (e.target && e.target.id === 'toggle-btn') {
                 this.isSignUp = !this.isSignUp;
@@ -79,18 +79,18 @@ const App = {
         // Formulario de Autenticación
         document.getElementById('auth-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            const identifier = document.getElementById('login-username').value;
             const password = document.getElementById('password').value;
-            const username = document.getElementById('username')?.value;
+            const email = document.getElementById('reg-email')?.value;
 
             try {
                 if (this.isSignUp) {
-                    await SupabaseManager.signUp(email, password, username);
-                    alert("¡Cuenta registrada! Por favor revisa tu correo electrónico para confirmar o intenta entrar.");
+                    await SupabaseManager.signUp(email, password, identifier);
+                    alert("¡Cuenta registrada! Revisa tu email para confirmar o intenta entrar.");
                     this.isSignUp = false;
                     this.updateAuthUI();
                 } else {
-                    const data = await SupabaseManager.signIn(email, password);
+                    const data = await SupabaseManager.signIn(identifier, password);
                     this.user = data.user;
                     await this.visitDashboard();
                 }
@@ -106,30 +106,29 @@ const App = {
             this.showScreen('auth-screen');
         });
 
-        // Botón Jugar (desde Dashboard)
+        // Botón Jugar
         document.getElementById('start-game-btn')?.addEventListener('click', () => {
             this.showScreen('instructions-screen');
         });
 
-        // Botón Activar Cámara & Empezar
+        // Cámara
         document.getElementById('grant-camera-btn')?.addEventListener('click', async () => {
             this.showScreen('game-screen');
             await AIManager.init();
             this.startGame();
         });
 
-        // Reintentar Juego
+        // Retenedor
         document.getElementById('retry-btn')?.addEventListener('click', () => {
             this.showScreen('game-screen');
             this.startGame();
         });
 
-        // Volver al Inicio
         document.getElementById('home-btn')?.addEventListener('click', () => {
             this.visitDashboard();
         });
 
-        // Pausar con la tecla P
+        // Pausa
         window.addEventListener('keydown', (e) => {
           if (e.key === 'p' || e.key === 'P') {
             Game.pause();
@@ -140,18 +139,21 @@ const App = {
     updateAuthUI() {
         const title = document.getElementById('auth-title');
         const btn = document.getElementById('auth-btn');
-        const usernameGroup = document.getElementById('username-group');
+        const label = document.getElementById('auth-label-user');
+        const emailGroup = document.getElementById('reg-email-group');
         const toggleContainer = document.querySelector('.toggle-auth');
         
         if (this.isSignUp) {
           title.innerText = 'Registro';
           btn.innerText = 'Registrarse';
-          usernameGroup.style.display = 'block';
+          label.innerText = 'Nombre de Usuario';
+          emailGroup.style.display = 'block';
           toggleContainer.innerHTML = '¿Ya tienes cuenta? <span id="toggle-btn" style="color: var(--accent); cursor: pointer;">Inicia Sesión</span>';
         } else {
           title.innerText = 'Iniciar Sesión';
           btn.innerText = 'Entrar';
-          usernameGroup.style.display = 'none';
+          label.innerText = 'Usuario';
+          emailGroup.style.display = 'none';
           toggleContainer.innerHTML = '¿No tienes cuenta? <span id="toggle-btn" style="color: var(--accent); cursor: pointer;">Regístrate</span>';
         }
     },
@@ -160,7 +162,6 @@ const App = {
         const canvas = document.getElementById('game-canvas');
         Game.init(canvas);
         
-        // Vincular señales de la IA con el Juego
         AIManager.onGestureDetected = (label) => {
           const mapping = {
             'spoon_up': 'up',
@@ -178,7 +179,6 @@ const App = {
             document.getElementById('final-score-val').innerText = score;
             document.getElementById('final-time-val').innerText = time;
             
-            // Guardar puntuación en Supabase si el usuario está autenticado
             if (this.user) {
               const username = this.user.user_metadata.username || this.user.email.split('@')[0];
               await SupabaseManager.saveScore(this.user.id, username, score, time);
@@ -189,5 +189,4 @@ const App = {
     }
 };
 
-// Iniciar aplicación
 window.addEventListener('DOMContentLoaded', () => App.init());
