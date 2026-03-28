@@ -91,10 +91,11 @@ const AIManager = {
 
     translateGesture(label) {
         const gestures = {
-            'spoon_up': '⬆️ Cuchara Arriba',
-            'spoon_right': '➡️ Cuchara Derecha',
-            'fork_down': '⬇️ Tenedor Abajo',
-            'fork_left': '⬅️ Tenedor Izquierda',
+            'arriba': '👍 Pulgar Arriba',
+            'derecha': '👉 Pulgar Derecha',
+            'abajo': '👎 Pulgar Abajo',
+            'izquierda': '👈 Pulgar Izquierda',
+            'spoon_up': '👍 Pulgar Arriba', // Compatibility
             'Neutral': 'Esperando...',
             'none': 'Esperando...'
         };
